@@ -375,6 +375,7 @@ def enable_mining(proxy):
     while True:
         try:
             proxy.setgenerate(True, threads_count)
+            print("mining enabled")
             break
         except Exception as e:
             print(e, " Waiting chain startup\n")
@@ -387,6 +388,7 @@ def enable_mining(proxy):
 def mine_and_waitconfirms(txid, proxy, confs_req=2):  # should be used after tx is send
     # we need the tx above to be confirmed in the next block
     attempts = 0
+    assert(txid)
     while True:
         try:
             confirmations_amount = proxy.getrawtransaction(txid, 1)['confirmations']

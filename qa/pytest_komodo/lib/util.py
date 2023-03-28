@@ -16,6 +16,7 @@ def assert_error(result):
 
 def check_if_mined(rpc_connection, txid):
     attempts = 0
+    assert(txid)
     while True:
         try:
             confirmations_amount = rpc_connection.getrawtransaction(txid, 1)["confirmations"]
