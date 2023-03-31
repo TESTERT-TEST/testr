@@ -831,7 +831,7 @@ CBlockTemplate* CreateNewBlock(const CPubKey _pk, const CScript& _scriptPubKeyIn
             else
                 opret.clear();
 
-            if (komodo_notaryvin(txNotary, NOTARY_PUBKEY33, opret, pblock->nTime) > 0)
+            if (komodo_notaryvin(txNotary, NOTARY_PUBKEY33, opret, pblock->nTime) > 0) // add a tx with a notary vin proving this notary created the block
             {
                 CAmount txfees = 5000;
                 pblock->vtx.push_back(txNotary);
@@ -1359,7 +1359,7 @@ void static BitcoinMiner()
                     // this node can easy mine only after 64 blocks since he mined a block last time: Mining_height > KOMODO_LASTMINED+64
                     if ( (Mining_height >= 235300 && Mining_height < 236000) || (j == 65 && Mining_height > KOMODO_MAYBEMINED+1 && Mining_height > KOMODO_LASTMINED+64) )
                     {
-                        HASHTarget = arith_uint256().SetCompact(KOMODO_MINDIFF_NBITS);  // set target for notary easy mining
+                        HASHTarget = arith_uint256().SetCompact(KOMODO_MINDIFF_NBITS); // Set min target for easy mining this block
                         fprintf(stderr,"I am the chosen one for %s ht.%d\n",chainName.symbol().c_str(),pindexPrev->nHeight+1);
                     } else fprintf(stderr,"duplicate at j.%d\n",j);
 

@@ -121,10 +121,10 @@ int32_t komodo_isnotaryvout(char *coinaddr,uint32_t tiptime) // from ac_private 
 }
 
 /***
- * @brief Given a height or timestamp, get the appropriate notary keys
+ * @brief Given a height or timestamp, get the acting notary key list, both for genesis or elected notaries
  * @param[out] pubkeys the results
- * @param[in] height the height
- * @param[in] timestamp the timestamp
+ * @param[in] height the height (used if this is KMD chain)
+ * @param[in] timestamp the timestamp (used if this is an asset chain)
  * @returns the number of notaries
  */
 int32_t komodo_notaries(uint8_t pubkeys[64][33],int32_t height,uint32_t timestamp)
@@ -207,6 +207,14 @@ int32_t komodo_notaries(uint8_t pubkeys[64][33],int32_t height,uint32_t timestam
     return -1;
 }
 
+/****
+ * @brief Returns if a notary pubkey is a valid notary for this height or timestamp, for elected notaries
+ * @param[out] numnotariesp number of notaries in the season notary list
+ * @param pubkey33 to check if it is a notary
+ * @param height for which notary status is checked (used if this is KMD chain)
+ * @param timestamp for which notary status is checked (used if this is an asset chain)
+ * @returns notary id >= 0 if the pubkey is a valid notary for this height or timestamp or -1 if not
+ */
 int32_t komodo_electednotary(int32_t *numnotariesp,uint8_t *pubkey33,int32_t height,uint32_t timestamp)
 {
     int32_t i,n; uint8_t pubkeys[64][33];
@@ -279,6 +287,14 @@ void komodo_notarysinit(int32_t origheight,uint8_t pubkeys[64][33],int32_t num)
         hwmheight = origheight;
 }
 
+/****
+ * @brief Returns if a pubkey is a valid notary for this height or timestamp, both for genesis or elected notaries
+ * @param[out] notary id as index in the season notary list
+ * @param height for which notary status is checked (used if this is KMD chain)
+ * @param pubkey to check if it is a notary
+ * @param timestamp for which notary status is checked (used if this is an asset chain)
+ * @returns value >= 0 if the pubkey is a valid notary for this height or timestamp or -1 if not
+ */
 int32_t komodo_chosennotary(int32_t *notaryidp,int32_t height,uint8_t *pubkey33,uint32_t timestamp)
 {
     // -1 if not notary, 0 if notary, 1 if special notary
@@ -296,7 +312,7 @@ int32_t komodo_chosennotary(int32_t *notaryidp,int32_t height,uint8_t *pubkey33,
     {
         if ( (*notaryidp= komodo_electednotary(&numnotaries,pubkey33,height,timestamp)) >= 0 && numnotaries != 0 )
         {
-            modval = ((height % numnotaries) == *notaryidp);
+            modval = ((height % numnotaries) == *notaryidp);    // this looks like not a meaningful value for elected notaries so it should be used simply as a non-negative value
             return(modval);
         }
     }

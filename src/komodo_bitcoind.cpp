@@ -843,10 +843,16 @@ void komodo_index2pubkey33(uint8_t *pubkey33,CBlockIndex *pindex,int32_t height)
     }
 }
 
-// Get miner ids (notary ids who mined) and their pubkeys for last 65 blocks
-// Also return blocktimes 
-// Note that mids[0], pubkeys[0], blocktimes[0] actually is not set as these elements correspond to future block of height
-// TODO fix mids[0], pubkeys[0] to set properly
+/***
+ * @brief Get miner ids (notary ids who mined) and their pubkeys for the recent 65 blocks. Also return pubkeys and blocktimes for the recent blocks.
+ * Note that mids[0], pubkeys[0], blocktimes[0] actually are not set as those elements correspond to the new, not mined yet, block
+ * @param[out] pubkeys notary pubkeys who mined last blocks
+ * @param[out] mids notary miner ids as their indexes in the season notary list 
+ * @param[out] blocktimes of the recent blocks
+ * @param[out] nonzpkeysp count of notary mined block in the recently mined blocks
+ * @param[in] height of the new block to be created
+ * @returns 1 if non zero notary blocks were found, 0 if not
+ */
 int32_t komodo_eligiblenotary(uint8_t pubkeys[66][33],int32_t *mids,uint32_t blocktimes[66],int32_t *nonzpkeysp,int32_t height)
 {
     // after the season HF block ALL new notaries instantly become elegible. 
@@ -912,6 +918,18 @@ int32_t komodo_minerids(uint8_t *minerids,int32_t height,int32_t width)
     return(nonz);
 }
 
+/****
+ * @brief Returns if a block mined by the pubkey33 for this height is special (allowed for notary easy mining). 
+ * Checks if pubkey33 is a valid notary and it has not already mined any of recent 65 blocks, 
+ * also checks if blocktime is valid correct in respect to the last blocktime
+ * @param pubkeys seems unused
+ * @param mids for notary ids which easy-mined recent blocks
+ * @param blocktimes block times from the recent blocks 
+ * @param height of the checked block
+ * @param pubkey33 notary pubkey mined the checked block
+ * @param blocktime of the checked block
+ * @returns 1 if block is special, 0 if it is a normally mined block, < 0 if it is an invalid special block
+ */
 int32_t komodo_is_special(uint8_t pubkeys[66][33],int32_t mids[66],uint32_t blocktimes[66],int32_t height,uint8_t pubkey33[33],uint32_t blocktime)
 {
     int32_t i,j,notaryid=0,minerid,limit,nid; uint8_t destpubkey33[33];
@@ -1092,7 +1110,8 @@ int32_t komodo_isrealtime(int32_t *kmdheightp)
 }
 
 /*******
- * @brief Validate added transaction's locktime to not allow it to be set too old (to prevent cheating with the interest value)
+ * @brief validate transaction lock time so it is not too old (no more than approx 1 hour earlier than last block time). 
+ * This is important for komodo interest calculation
  * @param tx the transaction
  * @param txheight the desired chain height to evaluate
  * @param cmptime the block time (often the median block time of a chunk of recent blocks)

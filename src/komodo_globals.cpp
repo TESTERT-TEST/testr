@@ -29,6 +29,8 @@ unsigned int WITNESS_CACHE_SIZE = _COINBASE_MATURITY+10;
 uint256 KOMODO_EARLYTXID;
 
 bool KOMODO_LOADINGBLOCKS; // defined in pow.cpp, boolean, 1 if currently loading the block index, 0 if not
+
+// this node is a komodo dpow protocol notary
 bool IS_KOMODO_NOTARY;
 bool IS_MODE_EXCHANGEWALLET = false;
 bool IS_KOMODO_DEALERNODE;
