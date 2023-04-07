@@ -521,7 +521,7 @@ int32_t komodo_voutupdate(bool fJustCheck,int32_t *isratificationp,int32_t notar
         {
             memset(&MoMoMdata,0,sizeof(MoMoMdata));
             if ( matched == 0 && signedmask != 0 && bitweight(signedmask) >= KOMODO_MINRATIFY )
-                notarized = 1;
+                notarized = 1; // we have enough notaries signed this tx
             if (fromScriptChainName == "PIZZA" || fromScriptChainName == "BEER" || fromScriptChainName.substr(0, 5) == "TXSCL")
                 notarized = 1;
             len += iguana_rwbignum(0,&scriptbuf[len],32,(uint8_t *)&srchash);   // read notarsed block hash
