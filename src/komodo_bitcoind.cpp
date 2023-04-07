@@ -1593,6 +1593,7 @@ int32_t komodo_getnotarizedheight(uint32_t timestamp,int32_t height, uint8_t *sc
     return(notarizedheight);
 }
 
+// adds vouts with notary pays to a mutable transaction. Used for assets chains with -ac_notarypay param
 uint64_t komodo_notarypay(CMutableTransaction &txNew, std::vector<int8_t> &NotarisationNotaries, uint32_t timestamp, int32_t height, uint8_t *script, int32_t len)
 {
     // fetch notary pubkey array.
@@ -1638,6 +1639,14 @@ uint64_t komodo_notarypay(CMutableTransaction &txNew, std::vector<int8_t> &Notar
     return(total);
 }
 
+/**
+ * For a vin array checks if their spent vouts are pay-to-pubkey and the pubkey is a notary
+ * @param notarypubkeys initialised currently acting notary pubkeys
+ * @param numNN number of notaries in notarypubkeys
+ * @param vin vector of vins to check
+ * @param[out] NotarisationNotaries reurned notary pubkeys from vins
+ * @return Returns false if could not load any previous transaction
+ */
 bool GetNotarisationNotaries(uint8_t notarypubkeys[64][33], int8_t &numNN, const std::vector<CTxIn> &vin, std::vector<int8_t> &NotarisationNotaries)
 {
     uint8_t *script; int32_t scriptlen;
@@ -1660,6 +1669,7 @@ bool GetNotarisationNotaries(uint8_t notarypubkeys[64][33], int8_t &numNN, const
     return true;
 }
 
+// checks notary payment is valid. Used for assets chains with -ac_notarypay parameter
 uint64_t komodo_checknotarypay(CBlock *pblock,int32_t height)
 {
     std::vector<int8_t> NotarisationNotaries; uint8_t *script; int32_t scriptlen;
