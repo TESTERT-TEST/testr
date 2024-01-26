@@ -129,6 +129,7 @@ class TestChannelsCCBase:
         else:
             minpayment = rpc1.channelsinfo(channel_instance.base_channel.get('open_txid')).get("Denomination (satoshi)")
         res = rpc1.channelspayment(channel_instance.base_channel.get('open_txid'), minpayment)
+        assert res.get('result') == 'success', str(res) + ', ensure komodod built with -DTESTMODE flag'
         validate_template(res, channelspayment_schema)
         txid = rpc1.sendrawtransaction(res.get('hex'))
         mine_and_waitconfirms(txid, rpc1)
@@ -151,6 +152,8 @@ class TestChannelsCCBase:
 
         # send 1 payment and close channel
         res = rpc1.channelspayment(newchannel.get('open_txid'), minpayment)
+        assert res.get('result') == 'success', str(res) + ', ensure komodod built with -DTESTMODE flag'
+        
         txid = rpc1.sendrawtransaction(res.get('hex'))
         mine_and_waitconfirms(txid, rpc1)
         res = rpc1.channelsclose(newchannel.get('open_txid'))
@@ -188,7 +191,7 @@ class TestChannelsCC:
 
         # lets try payment with x2 amount to ensure that counters works correct
         res = rpc1.channelspayment(channel.get('open_txid'), '200000')
-        assert res.get('result') == 'success'
+        assert res.get('result') == 'success', str(res) + ', ensure komodod built with -DTESTMODE flag'
         payment_tx_id = rpc1.sendrawtransaction(res.get('hex'))
         mine_and_waitconfirms(payment_tx_id, rpc1)
         assert isinstance(payment_tx_id, str)
@@ -254,7 +257,7 @@ class TestChannelsCC:
         # draining channel (3 payment by 100000 satoshies in total to fit full capacity)
         for i in range(3):
             res = rpc1.channelspayment(channel.get('open_txid'), '100000')
-            assert res.get('result') == 'success'
+            assert res.get('result') == 'success', str(res) + ', ensure komodod built with -DTESTMODE flag'
             payment_tx = rpc1.sendrawtransaction(res.get("hex"))
             mine_and_waitconfirms(payment_tx, rpc1)
 
@@ -275,38 +278,49 @@ class TestChannelsCC:
         pubkey2 = channel_instance.pubkey[1]
         channel = channel_instance.new_channel(rpc1, pubkey2)
 
-        # disconnecting first node from network
-        rpc1.setban("127.0.0.0/24", 'add')
-        rpc2.setban("127.0.0.0/24", 'add')
-        # timewait for bans to take place
-        timeout = 40
-        t_iter = 0
-        while rpc1.getinfo()['connections'] != 0 or rpc2.getinfo()['connections'] != 0:
-            time.sleep(1)
-            t_iter += 1
-            if t_iter >= timeout:
-                raise TimeoutError("Setban timeout: ", str(t_iter), "s")
-
-        # sending one payment to mempool to reveal the secret but not mine it
-        payment_hex = rpc1.channelspayment(channel.get('open_txid'), '100000')
-        res = rpc1.sendrawtransaction(payment_hex['hex'])
-        assert isinstance(res, str)
-
-        secret = rpc1.channelsinfo(channel.get('open_txid'))['Transactions'][1]['Secret']
-        assert isinstance(res, str)
-
-        # secret shouldn't be available for node B
         try:
-            check = rpc2.channelsinfo(channel.get('open_txid'))['Transactions'][1]['Secret']
-        except IndexError as e:
-            print(e)
-            check = None
-        assert not check
+            # disconnecting first node from network
+            rpc1.setban("127.0.0.0/24", 'add')
+            rpc2.setban("127.0.0.0/24", 'add')
+            # timewait for bans to take place
+            timeout = 40
+            t_iter = 0
+            while rpc1.getinfo()['connections'] != 0 or rpc2.getinfo()['connections'] != 0:
+                time.sleep(1)
+                t_iter += 1
+                if t_iter >= timeout:
+                    raise TimeoutError("Setban timeout: ", str(t_iter), "s")
 
-        # trying to initiate payment from second node with revealed secret
-        assert rpc1.getinfo()['connections'] == 0
-        dc_payment_hex = rpc2.channelspayment(channel.get('open_txid'), '100000', secret)
-        res = rpc2.sendrawtransaction(dc_payment_hex['hex'])
-        assert isinstance(res, str)
-        rpc1.clearbanned()
-        rpc2.clearbanned()
+            # sending one payment to mempool to reveal the secret but not mine it
+            payment_hex = rpc1.channelspayment(channel.get('open_txid'), '100000')
+            assert payment_hex.get('result') == 'success', str(payment_hex) + ', ensure komodod built with -DTESTMODE flag'
+            
+            res = rpc1.sendrawtransaction(payment_hex['hex'])
+            assert isinstance(res, str)
+
+            secret = rpc1.channelsinfo(channel.get('open_txid'))['Transactions'][1]['Secret']
+            assert isinstance(res, str)
+
+            # secret shouldn't be available for node B
+            try:
+                check = rpc2.channelsinfo(channel.get('open_txid'))['Transactions'][1]['Secret']
+            except IndexError as e:
+                print(e)
+                check = None
+            assert not check
+
+            # trying to initiate payment from second node with revealed secret
+            assert rpc1.getinfo()['connections'] == 0
+            dc_payment_hex = rpc2.channelspayment(channel.get('open_txid'), '100000', secret)
+            assert dc_payment_hex.get('result') == 'success', str(dc_payment_hex) + ', ensure komodod built with -DTESTMODE flag'
+            res = rpc2.sendrawtransaction(dc_payment_hex['hex'])
+            assert isinstance(res, str)
+            rpc1.clearbanned()
+            rpc2.clearbanned()
+            print("banned nodes cleared")
+
+        except Exception as e:
+            rpc1.clearbanned()
+            rpc2.clearbanned()
+            print("banned nodes cleared")
+            raise e

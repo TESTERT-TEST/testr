@@ -322,18 +322,38 @@ def validate_proxy(env_params_dictionary, proxy, node=0):
     while True:  # base connection check
         try:
             getinfo_output = proxy.getinfo()
-            print(getinfo_output)
-            break
+            if getinfo_output is not None:
+                break
+            raise Exception("getinfo returned empty result")
         except Exception as e:
-            print("Coennction failed, error: ", e, "\nRetrying")
+            print("Connection failed, error: ", e, "\nRetrying")
             attempts += 1
             time.sleep(10)
         if attempts > 15:
             raise ChildProcessError("Node ", node, " does not respond")
+    
     print("IMPORTING PRIVKEYS")
-    res = proxy.importprivkey(env_params_dictionary.get('test_wif')[node], '', True)
-    print(res)
-    assert proxy.validateaddress(env_params_dictionary.get('test_address')[node])['ismine']
+    try:
+        proxy.importprivkey(env_params_dictionary.get('test_wif')[node], '', True)
+    except:
+        pass # importprivkey may time out
+
+    # wait up to 300 sec for importprivkey to finish if it's timed out
+    validate_result = None
+    attempts = 0
+    while attempts < 30:
+        try:
+            validate_result = proxy.validateaddress(env_params_dictionary.get('test_address')[node])['ismine']
+            if validate_result:
+                break 
+        except:
+            pass
+        time.sleep(10) 
+        print("Waiting for importprivkey...")
+        attempts += 1
+
+    assert validate_result
+
     try:
         pubkey = env_params_dictionary.get('test_pubkey')[node]
         assert proxy.getinfo()['pubkey'] == pubkey
@@ -355,6 +375,7 @@ def enable_mining(proxy):
     while True:
         try:
             proxy.setgenerate(True, threads_count)
+            print("mining enabled")
             break
         except Exception as e:
             print(e, " Waiting chain startup\n")
@@ -367,6 +388,7 @@ def enable_mining(proxy):
 def mine_and_waitconfirms(txid, proxy, confs_req=2):  # should be used after tx is send
     # we need the tx above to be confirmed in the next block
     attempts = 0
+    assert(txid)
     while True:
         try:
             confirmations_amount = proxy.getrawtransaction(txid, 1)['confirmations']
@@ -442,19 +464,21 @@ def validate_template(blocktemplate, schema=''):  # BIP 0022
     jsonschema.validate(instance=blocktemplate, schema=schema)
 
 
+# two or more nodes are in sync if they have same number of blocks
 def check_synced(*proxies):
-    for proxy in proxies:
+    while True:
         tries = 0
-        while True:
-            check = proxy.getinfo().get('synced')
-            proxy.ping()
-            if check:
-                print("Synced\n")
-                break
-            else:
-                print("Waiting for sync\nAttempt: ", tries + 1, "\n")
-                time.sleep(10)
-                tries += 1
+        blocks_set = set()
+        for proxy in proxies:
+            blocks = proxy.getinfo().get('blocks')
+            blocks_set.add(blocks)
+        if  len(blocks_set) == 1: # all have same 'blocks' value
+            print("Synced\n")
+            break
+        else:
+            print("Waiting for sync\nAttempt: ", tries + 1, "\n")
+            time.sleep(10)
+            tries += 1
             if tries > 120:  # up to 20 minutes
                 return False
     return True
