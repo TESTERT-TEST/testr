@@ -2422,7 +2422,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     if (chainName.isKMD()) {
         if (nHeight == 1)
             return 100000000 * COIN; // ICO allocation
-        else if (nHeight < nS8HardforkHeight)
+        else if (nHeight <= nS8HardforkHeight)
             return 3 * COIN;
         else
             return COIN; // KIP-0002, https://github.com/KomodoPlatform/kips/blob/main/kips/kip-0002.mediawiki
