@@ -2062,7 +2062,7 @@ int32_t komodo_checkPOW(int64_t stakeTxValue, int32_t slowflag,CBlock *pblock,in
                   fKIP0003Checked ? "PASSED!" : "FAILED!");
 
         // Uncomment the following line if you need to return -1 on failure
-        // if (!fKIP0003Checked) return -1;
+        if (!fKIP0003Checked) return -1;
     }
 
     //fprintf(stderr,"komodo_checkPOW possible.%d slowflag.%d ht.%d notaryid.%d failed.%d\n",possible,slowflag,height,notaryid,failed);
