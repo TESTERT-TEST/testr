@@ -17,8 +17,8 @@ const int32_t nS6HardforkHeight = 2963330;  // dPoW Season 6, Fri Jun 24 2022
 const uint32_t nS7Timestamp = 1688132253;   // dPoW Season 7, Fri Jun 30 2023 13:37:33 GMT+0000
 const int32_t nS7HardforkHeight = 3484958;  // dPoW Season 7, Fri Jun 30 2023
 
-const uint32_t nS8Timestamp = 1716493948;   // dPoW Season 8, Thu May 23 2024 19:52:28 GMT+0000
-const int32_t nS8HardforkHeight = 3943863;  // dPoW Season 8, Thu May 23 2024
+const uint32_t nS8Timestamp = 1716496754;   // dPoW Season 8, Thu May 23 2024 20:39:14 GMT+0000
+const int32_t nS8HardforkHeight = 3943909;  // dPoW Season 8, Thu May 23 2024
 
 const int32_t nKIP0003Activation = nS8HardforkHeight;
 
