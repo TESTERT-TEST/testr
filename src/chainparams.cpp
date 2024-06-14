@@ -188,10 +188,15 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
 
-        vSeeds.push_back(CDNSSeedData("komodoseeds.org", "kmd.komodoseeds.org")); // decker
-        vSeeds.push_back(CDNSSeedData("kmd.sh", "seeds1.kmd.sh")); // decker
-        vSeeds.push_back(CDNSSeedData("cipig.net", "kmdseed.cipig.net")); // cipig
-        vSeeds.push_back(CDNSSeedData("lordofthechains.com", "kmdseeds.lordofthechains.com")); // gcharang
+        // hfnet 
+        vSeeds.push_back(CDNSSeedData("hfnet-2024", "hfnet.komodoseeds.org"));
+        
+        /*
+            vSeeds.push_back(CDNSSeedData("komodoseeds.org", "kmd.komodoseeds.org")); // decker
+            vSeeds.push_back(CDNSSeedData("kmd.sh", "seeds1.kmd.sh")); // decker
+            vSeeds.push_back(CDNSSeedData("cipig.net", "kmdseed.cipig.net")); // cipig
+            vSeeds.push_back(CDNSSeedData("lordofthechains.com", "kmdseeds.lordofthechains.com")); // gcharang
+        */
 
         /*
         vSeeds.push_back(CDNSSeedData("komodoseeds.com", "kmd.komodoseeds.com"));
