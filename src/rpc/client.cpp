@@ -38,6 +38,11 @@ public:
 
 static const CRPCConvertParam vRPCConvertParams[] =
 {
+    { "nn_split", 0 },
+    { "nn_split", 1 },
+    { "nn_split", 2 },
+    { "nn_split", 3 },
+    { "nn_split", 4 },
     { "stop", 0 },
     { "setmocktime", 0 },
     { "getaddednodeinfo", 0 },
