@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install deps(mingw)
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -67,7 +67,7 @@ jobs:
         ./zcutil/build-win-dtest.sh -j$(nproc)
         zip --junk-paths komodod_win src/komodod.exe src/komodo-cli.exe
     - name: Upload komodod.exe as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: komodod_win
         path: ./komodod_win.zip
@@ -80,10 +80,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download komodo_win.zip
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: komodod_win
 
@@ -111,10 +111,10 @@ jobs:
     needs: windows-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download komodo_win.zip
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: komodod_win
 
@@ -142,10 +142,10 @@ jobs:
     needs: windows-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download komodo_win.zip
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: komodod_win
 
@@ -173,10 +173,10 @@ jobs:
     needs: windows-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download komodo_win.zip
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: komodod_win
 
@@ -204,10 +204,10 @@ jobs:
     needs: windows-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download komodo_win.zip
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: komodod_win
 
