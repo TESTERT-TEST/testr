@@ -629,6 +629,16 @@ AX_BOOST_PROGRAM_OPTIONS
 AX_BOOST_THREAD
 AX_BOOST_CHRONO
 
+dnl Prevent use of std::unary_function, which was removed in C++17,
+dnl and will generate warnings with newer compilers for Boost
+dnl older than 1.80.
+dnl See: https://github.com/boostorg/container_hash/issues/22, https://github.com/boostorg/config/pull/430.
+
+dnl _HAS_AUTO_PTR_ETC check required only for boost 1.72 and older, since 1.73 we can use BOOST_NO_CXX98_FUNCTION_BASE
+AX_CHECK_PREPROC_FLAG([-D_HAS_AUTO_PTR_ETC=0], [BOOST_CPPFLAGS="$BOOST_CPPFLAGS -D_HAS_AUTO_PTR_ETC=0"], [], [$CXXFLAG_WERROR],
+                      [AC_LANG_PROGRAM([[#include <boost/config.hpp>]])])
+AX_CHECK_PREPROC_FLAG([-DBOOST_NO_CXX98_FUNCTION_BASE], [BOOST_CPPFLAGS="$BOOST_CPPFLAGS -DBOOST_NO_CXX98_FUNCTION_BASE"], [], [$CXXFLAG_WERROR],
+                      [AC_LANG_PROGRAM([[#include <boost/config.hpp>]])])
 fi
 
 if test x$use_reduce_exports = xyes; then
