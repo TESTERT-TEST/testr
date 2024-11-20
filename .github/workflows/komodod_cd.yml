@@ -30,7 +30,7 @@ jobs:
         id: shortify_commit
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install deps (Linux)
         env:
@@ -55,7 +55,7 @@ jobs:
           ./zcutil/build.sh -j$(nproc)
           zip --junk-paths komodo-linux src/komodod src/komodo-cli
       - name: Upload komodo-linux.zip as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: komodo-linux
           path: ./komodo-linux.zip
@@ -112,7 +112,7 @@ jobs:
           zip --junk-paths komodo-osx src/komodod src/komodo-cli
 
       - name: Upload komodo-osx.zip as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: komodo-osx
           path: ./komodo-osx.zip
@@ -123,7 +123,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install deps (Windows)
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -147,7 +147,7 @@ jobs:
           ./zcutil/build-win.sh -j$(nproc)
           zip --junk-paths komodo-win src/komodod.exe src/komodo-cli.exe
       - name: Upload komodo-win.zip as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: komodo-win
           path: ./komodo-win.zip      
@@ -159,15 +159,15 @@ jobs:
       needs: [linux-build, osx-build, windows-build]
       steps:
         - name: Download komodo-linux.zip
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: komodo-linux  
         - name: Download komodo-osx.zip
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: komodo-osx
         - name: Download komodo-win.zip
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: komodo-win
 
