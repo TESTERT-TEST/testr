@@ -84,7 +84,7 @@ def ensure_no_dot_so_in_depends():
     arch_dir = os.path.join(
         REPOROOT,
         'depends',
-        'x86_64-unknown-linux-gnu',
+        'x86_64-pc-linux-gnu',
     )
 
     exit_code = 0
