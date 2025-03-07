@@ -10,10 +10,10 @@ jobs:
 
   linux-build:
     name: Linux Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install deps (Linux)
 
@@ -21,9 +21,9 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update  # prevents repo404 errors on apt-remove below
-          sudo apt-get remove php* msodbcsql17 mysql* powershell dotn*
-          sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get upgrade -y
+          # sudo apt-get remove php* msodbcsql17 mysql* powershell dotn*
+          # sudo apt-get update
+          # sudo ACCEPT_EULA=Y apt-get upgrade -y
           sudo apt-get install -q \
                  curl \
                  python3 \
@@ -41,7 +41,7 @@ jobs:
           CONFIGURE_FLAGS='CPPFLAGS=-DTESTMODE' ./zcutil/build.sh -j$(nproc)
           tar -czvf komodo-linux.tar.gz src/komodod src/komodo-cli
       - name: Upload komodo-linux.tar.gz as artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: komodo-linux
           path: ./komodo-linux.tar.gz
@@ -50,11 +50,11 @@ jobs:
     if: ${{ false }}
 
     name: Test (Linux/Dice, Token, Faucet, Rewards)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: linux-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install deps (Dice, Token, Faucet, Rewards CC)
         run: |
@@ -71,7 +71,7 @@ jobs:
           python3 -m pip install pytest wget jsonschema
           python3 -m pip install -Iv https://github.com/KomodoPlatform/slick-bitcoinrpc/archive/refs/tags/0.1.4.tar.gz
       - name: Download komodo-linux.tar.gz
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: komodo-linux
 
@@ -87,11 +87,11 @@ jobs:
     if: ${{ false }}
 
     name: Test (Linux/OraclesCC)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: linux-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install deps (OraclesCC)
         run: |
@@ -108,7 +108,7 @@ jobs:
           python3 -m pip install pytest wget jsonschema
           python3 -m pip install -Iv https://github.com/KomodoPlatform/slick-bitcoinrpc/archive/refs/tags/0.1.4.tar.gz
       - name: Download komodo-linux.tar.gz
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: komodo-linux
 
@@ -124,11 +124,11 @@ jobs:
     if: ${{ false }}
 
     name: Test (Linux/BasicRPC)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: linux-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install deps (BasicRPC)
         run: |
@@ -145,7 +145,7 @@ jobs:
           python3 -m pip install pytest wget jsonschema
           python3 -m pip install -Iv https://github.com/KomodoPlatform/slick-bitcoinrpc/archive/refs/tags/0.1.4.tar.gz
       - name: Download komodo-linux.tar.gz
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: komodo-linux
 
@@ -161,11 +161,11 @@ jobs:
     if: ${{ false }}
 
     name: Test (Linux/ChannelsCC)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: linux-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install deps (ChannelsCC)
         run: |
@@ -182,7 +182,7 @@ jobs:
           python3 -m pip install pytest wget jsonschema
           python3 -m pip install -Iv https://github.com/KomodoPlatform/slick-bitcoinrpc/archive/refs/tags/0.1.4.tar.gz
       - name: Download komodo-linux.tar.gz
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: komodo-linux
 
@@ -198,11 +198,11 @@ jobs:
     if: ${{ false }}
 
     name: Test (Linux/HeirCC)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: linux-build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install deps (HeirCC)
         run: |
@@ -219,7 +219,7 @@ jobs:
           python3 -m pip install pytest wget jsonschema
           python3 -m pip install -Iv https://github.com/KomodoPlatform/slick-bitcoinrpc/archive/refs/tags/0.1.4.tar.gz
       - name: Download komodo-linux.tar.gz
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: komodo-linux
 

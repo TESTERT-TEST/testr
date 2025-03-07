@@ -122,6 +122,7 @@ static const int64_t DEFAULT_MAX_TIP_AGE = 24 * 60 * 60;
 /** Default NSPV support enabled */
 static const bool DEFAULT_NSPV_PROCESSING = false;
 
+static const bool DEFAULT_TXINDEX = true;
 //static const bool DEFAULT_ADDRESSINDEX = false;
 //static const bool DEFAULT_SPENTINDEX = false;
 #define DEFAULT_ADDRESSINDEX (GetArg("-ac_cc",0) != 0 || GetArg("-ac_ccactivate",0) != 0)
